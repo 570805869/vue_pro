@@ -26,10 +26,10 @@ const router = new Router({
 })
 //  路由导航守卫
 router.beforeEach((to, from, next) => {
-  // if (to.path === '/login') return next()
-  // const tokenStr = sessionStorage.getItem('token')
-  // // console.log(tokenStr)
-  // if (tokenStr) return next()
+  if (to.path === '/login') return next()
+  const tokenStr = sessionStorage.getItem('token')
+  // console.log(tokenStr)
+  if (tokenStr) return next()
   next('/login')
 })
 
