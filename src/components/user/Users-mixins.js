@@ -68,7 +68,17 @@ export default {
         username: '',
         email: '',
         mobile: ''
-      }
+      },
+      // 分配角色对话框
+      setRoleDialogVisible: false,
+      // 分配角色表单信息
+      setRoleForm: {
+        id: '',
+        username: '',
+        role_name: '',
+        rid: ''
+      },
+      rolesList: []
     }
   },
   created () {
@@ -145,6 +155,7 @@ export default {
         this.editDialogVisible = false
       })
     },
+    // 删除
     async remove (scope) {
       // console.log(scope.row.id)
       const confirmResult = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -163,6 +174,38 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('删除用户失效')
       this.$message.success('删除用户成功')
       this.getUserList()
+    },
+    // 点击按钮 展示分配角色的对话框
+    showSetRoleDialog (row) {
+      this.setRoleDialogVisible = true
+      console.log(row)
+      this.setRoleForm.id = row.id
+      this.setRoleForm.role_name = row.role_name
+      this.setRoleForm.username = row.username
+      this.getRolesList()
+    },
+    // 关闭 分配角色对话框
+    setRoleDialogClosed () {
+      // 在vue中，没有设定:rules规则的时候，resetfields是不生效的
+      this.setRoleForm.rid = ''
+    },
+    // 获取所有角色列表
+    async getRolesList () {
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$message.error('获取角色列表失败')
+      this.rolesList = res.data
+      console.log(res.data)
+    },
+    // 点击按钮分配新角色
+    async setRole () {
+      if (this.setRoleForm.rid === '') return this.$message('请选择要分配的权限')
+      // put方法（请求地址，请求参数）
+      const { data: res } = await this.$http.put(`users/${this.setRoleForm.id}/role`, {
+        rid: this.setRoleForm.rid})
+      if (res.meta.status !== 200) return this.$message.error('为用户分配新角色失败！')
+      this.$message.success('为用户分配新角色成功！')
+      this.getUserList()
+      this.setRoleDialogVisible = false
     }
   }
 }

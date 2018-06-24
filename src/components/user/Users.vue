@@ -63,7 +63,7 @@
           <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope)"></el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini" @click="remove(scope)"></el-button>
           <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-            <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+            <el-button type="warning" icon="el-icon-setting" size="mini" @click="showSetRoleDialog(scope.row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -128,6 +128,39 @@
     <el-button @click="editDialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="editUser">确 定</el-button>
   </span>
+    </el-dialog>
+    <!-- 为用户分配角色的对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @close="setRoleDialogClosed">
+      <!-- 分配角色的表单 -->
+      <el-form ref="setRoleFormRef" :model="setRoleForm" label-width="100px">
+        <el-form-item label="当前的用户：">
+          {{setRoleForm.username}}
+        </el-form-item>
+        <el-form-item label="当前的角色：">
+          {{setRoleForm.role_name}}
+        </el-form-item>
+        <el-form-item label="分配新角色：">
+          <el-select v-model="setRoleForm.rid" placeholder="请选择">
+            <!-- el-option 中： -->
+            <!-- label 控制的是显示的名称 -->
+            <!-- value 控制的是某一项被选中以后，选中的真正的值 -->
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setRole">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
